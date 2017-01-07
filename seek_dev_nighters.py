@@ -3,15 +3,14 @@ import pytz
 from datetime import time, datetime
 
 
-def load_attempts(pages=5):
+def load_attempts(pages=10):
     url = 'https://devman.org/api/challenges/solution_attempts'
     for page in range(1, pages + 1):
         response = requests.get(url, params={'page': page}).json()
-        for record in response['records']:
-            yield record
+        yield from response['records']
 
 
-def check_midnighter(record, end_hour=3):
+def is_midnighter(record, end_hour=3):
     timestamp = record['timestamp']
     if timestamp:
         timezone = record['timezone']
@@ -20,7 +19,7 @@ def check_midnighter(record, end_hour=3):
 
 
 def get_midnighters():
-    return {record['username'] for record in load_attempts() if check_midnighter(record)}
+    return {record['username'] for record in load_attempts() if is_midnighter(record)}
 
 
 if __name__ == '__main__':
