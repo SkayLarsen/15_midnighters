@@ -3,9 +3,10 @@ import pytz
 from datetime import time, datetime
 
 
-def load_attempts(pages=10):
+def load_attempts():
     url = 'https://devman.org/api/challenges/solution_attempts'
-    for page in range(1, pages + 1):
+    number_of_pages = requests.get(url).json()['number_of_pages']
+    for page in range(1, number_of_pages + 1):
         response = requests.get(url, params={'page': page}).json()
         yield from response['records']
 
